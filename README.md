@@ -6,4 +6,4 @@ lets have fun
 ![preview](preview.gif)
 
 realated to this video:   
-**still uploading**
+https://aparat.com/v/mhJAO

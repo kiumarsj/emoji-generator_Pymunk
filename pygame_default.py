@@ -1,8 +1,10 @@
 import pygame, sys
 
+# const
 SCREEN_SIZE = (800,800)
 FPS = 120
 
+# pygame setup
 pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
 clock = pygame.time.Clock()

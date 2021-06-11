@@ -1,18 +1,24 @@
-# beta
-
 import pygame, sys, os, random
 import pymunk, math
 
 # constants
 SCREEN_SIZE = (800,800)
 FPS = 120
-RED = (255,0,0)
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-GREEN = (0,255,0)
+BLACK = (0, 0, 0, 0)
+GRAY = (200, 200, 200, 0)
+LIGHTGRAY = (220, 220, 220, 0)
+WHITE = (255, 255, 255, 0)
+
+RED = (255, 0, 0, 0)
+GREEN = (0, 255, 0, 0)
+BLUE = (0, 0, 255, 0)
+
+YELLOW = (255, 255, 0, 0)
+CYAN = (0, 255, 255, 0)
+MAGENTA = (255, 0, 255, 0)
 EMOJI = pygame.image.load('emoji.png')
 
-GRAVITY = 250
+GRAVITY = 300
 
 class Emoji:
     global space
@@ -80,15 +86,32 @@ pygame.init()
 screen = pygame.display.set_mode(SCREEN_SIZE)
 clock = pygame.time.Clock()
 
+drawing_is_activated = True
+mouse_btn_is_down= False
+
 emojis = []
-circles = []
-rects = []
-# rects.append(object_rect(space, (0,600), 800, 100))
 
 pixels = []
 
 
-def pixel(pos,thickness=20):
+def menu():
+    pygame.draw.rect(screen, YELLOW , (0,0, 50, 50))
+    pygame.draw.rect(screen, GREEN , (50,0, 50, 50))
+    
+def menu_item_clicked(pos):
+    global drawing_is_activated, GRAVITY
+    x,y = pos
+    if y > 50:
+        return False
+    if x <= 50:
+        drawing_is_activated = not drawing_is_activated
+    elif x <=100:
+        GRAVITY = 0 if GRAVITY > 0 else 250
+    return True
+        
+            
+
+def pixel(pos,thickness=10):
         x = pos[0]
         y = pos[1]
         t = int(thickness / 2)
@@ -101,7 +124,7 @@ def pixel(pos,thickness=20):
         space.add(body, shape)    
 
 
-def draw_pixel(thickness=20, color =RED ):
+def draw_pixel(thickness=10, color =BLUE ):
     
     for pos in pixels:
         x = pos[0]
@@ -112,13 +135,9 @@ def draw_pixel(thickness=20, color =RED ):
 
 
 
-point = (0,0)
 
-screen.fill((217,217,217))
-
-enable_dots = True
-clicked= False
 while True:
+    space.gravity = (0,GRAVITY)
     # track events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -133,28 +152,26 @@ while True:
             
             # enter
             if event.key == pygame.K_RETURN:
-                enable_dots = not enable_dots
-                print(enable_dots)
+                drawing_is_activated = not drawing_is_activated
+                print(drawing_is_activated)
 
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            clicked = True
-            if enable_dots:
-                pass
-            else:
+            mouse_btn_is_down = True
+            
+            if not menu_item_clicked(event.pos) and not drawing_is_activated:
                 emojis.append(Emoji(pos= event.pos))
-        
+            
         if event.type == pygame.MOUSEBUTTONUP:
-            clicked = False
+            mouse_btn_is_down = False
             
             
-        if clicked:  
-            if enable_dots:
+        if mouse_btn_is_down:  
+            if drawing_is_activated:
                 pixels.append(event.pos)
                 pixel(event.pos)
 
-           
-            
+                       
             
     # while body   
     space.step(1/50)
@@ -162,11 +179,11 @@ while True:
     for emoji in emojis:
         emoji.draw()
 
-    # draw_playground(circles, rects)
     
     draw_pixel()
-ASWB 
     
+    
+    menu()
     pygame.display.update()
     clock.tick(FPS) # frame per sec
     

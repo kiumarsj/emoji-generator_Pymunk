@@ -8,9 +8,9 @@ RED = (255,0,0)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 GREEN = (0,255,0)
-EMOJI = pygame.image.load('emoji.png')
-
+EMOJI = pygame.image.load('emoji.png') # downloaded from https://emojipedia.org/
 GRAVITY = 250
+
 
 class Emoji:
     global space
@@ -26,6 +26,7 @@ class Emoji:
         y = int(self.body.position.y)
         emoji_rec = self.image.get_rect(center= (x,y))
         screen.blit(self.image, emoji_rec)
+        
            
 def get_random_emoji_images():
     path = './emojis/'
@@ -34,33 +35,36 @@ def get_random_emoji_images():
     return pygame.image.load(path+"/"+ images[rand])
     
     
-        
-def object_circle(space,pos, size):
+# playground / exprimental         
+def playground():
+    # circle 01
     body = pymunk.Body(body_type=pymunk.Body.STATIC)
-    body.position = pos
-    shape = pymunk.Circle(body, size)
+    body.position = (505,405)
+    shape = pymunk.Circle(body, 100)
     space.add(body, shape)
-    return shape
-
-def object_rect(space,pos, width, height):
+    x = int(body.position.x)
+    y = int(body.position.y)
+    pygame.draw.circle(screen, WHITE,  (x,y),100)
+    # circle 02    
     body = pymunk.Body(body_type=pymunk.Body.STATIC)
-    body.position = pos
+    body.position = (150,700)
+    shape = pymunk.Circle(body, 200)
+    space.add(body, shape)
+    x = int(body.position.x)
+    y = int(body.position.y)
+    pygame.draw.circle(screen, WHITE,  (x,y),200)
+    # ground      
+    body = pymunk.Body(body_type=pymunk.Body.STATIC)
+    body.position = pos = (0,600)
+    width = 800
+    height = 100
     vs = [pos, (width, pos[1]), (width, height), (pos[0], height)]
     shape = pymunk.Poly(body, vs)
-    space.add(body, shape)
-    return shape
-
-     
-def draw_playground(circles, rects):
-    for circle in circles:
-        x = int(circle.body.position.x)
-        y = int(circle.body.position.y)
-        pygame.draw.circle(screen, WHITE,  (x,y),circle.radius)   
-    for rect in rects:
-        x = int(rect.body.position.x)
-        y = int(rect.body.position.y)
-        pygame.draw.rect(screen, GREEN,  (0,600+100, 800, 100))
-
+    space.add(body, shape)   
+    x = int(body.position.x)
+    y = int(body.position.y)
+    pygame.draw.rect(screen, GREEN,  (0,700, 800, 100))
+    
 
 
 # pymunk setup
@@ -74,17 +78,6 @@ clock = pygame.time.Clock()
 
 emojis = []
 
-circles = []
-circles.append(object_circle(space,(500+5,500-5),100))
-circles.append(object_circle(space,(150,700),200))
-
-rects = []
-rects.append(object_rect(space, (0,600), 800, 100))
-
-
-
-
-
 while True:
     # track events
     for event in pygame.event.get():
@@ -95,8 +88,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             emojis.append(Emoji(pos= event.pos))
            
-            
-            
+                       
     # while body   
     screen.fill((217,217,217))
     space.step(1/50)
@@ -104,7 +96,7 @@ while True:
     for emoji in emojis:
         emoji.draw()
 
-    draw_playground(circles, rects)
+    playground()
     
     pygame.display.update()
     clock.tick(FPS) # frame per sec
